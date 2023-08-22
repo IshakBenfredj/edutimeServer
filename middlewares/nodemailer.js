@@ -11,20 +11,15 @@ const transporter = nodemailer.createTransport({
     });
 
     // Send the email
-    const sendMail = (title, message, order,service)=>{
+    const sendMail = (email, code, title,message)=>{
         transporter.sendMail({
             from: process.env.EMAIL ,
-            to: `${order.email}`,
+            to: `${email}`,
             subject: `${title}`,
             html: `
-                    <div style="border: 1px solid #ccc; direction: rtl ; padding: 20px; border-radius: 5px; width:fit-content; margin: auto; background: #f1f5f9;">
-                        <h1 style="font-style: italic;color: #ef9b0f; text-align: center; font-size: 30px;" ">TravelGo</h1>
-                        <h4 style="font-style: italic; font-size: 20px;">${message}</h4>
-                        <div style="font-size: 20px;"><span style="font-size: 22px; color: red;">الإسم : </span>${order.userName}</div>
-                        <div style="font-size: 20px;"><span style="font-size: 22px; color: red;">رقم الذهبية : </span>${order.dahabia}</div>
-                        <div style="font-size: 20px;"><span style="font-size: 22px; color: red;">السعر : </span>${order.price}</div>
-                        <div style="font-size: 20px;"><span style="font-size: 22px; color: red;">تاريخ الطلب : </span><span style="direction: ltr ;">${order.addAt}</span></div>
-                        <div style="font-size: 20px;"><span style="font-size: 22px; color: red;">الخدمة المطلوبة : </span>${service}</div>
+                    <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width:fit-content; margin: auto; background: #f1f5f9;">
+                        <h4 style="font-style: italic;">${message}</h4>
+                        <h1>${code}</h1>
                     </div>
                 `
             },
