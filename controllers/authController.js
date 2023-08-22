@@ -29,6 +29,45 @@ export const confirmEmail = async (req, res) => {
     }
 };
 
+export const emailVerify = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: "هذا البريد غير موجود!" });
+        }
+
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const message = 'السلام عليكم , هذا هو الرمز الخاص بك لتأكيد البريد الإلكتروني خاصتك من أجل تغيير كلمة السر خاصتك'
+        const title = 'Reset Password'
+        sendMail(email,code,title,message)
+
+        res.status(201).json({ code, user });
+    } catch (error) {
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};
+
+export const resetPassword = async (req, res) => {
+    try {
+        const { password, id } = req.body;
+
+        const user = await User.findById( id );
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        user.password = hashedPassword
+        await user.save()
+
+        res.status(201).json({ message: 'تم تغيير كلمة السر بنجاح' });
+    } catch (error) {
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};
+
 export const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body

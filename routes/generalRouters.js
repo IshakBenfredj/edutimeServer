@@ -1,5 +1,5 @@
 import  express  from "express";
-import { signup, login, confirmEmail } from "../controllers/authController.js";
+import { signup, login, confirmEmail, emailVerify, resetPassword } from "../controllers/authController.js";
 import { getUser, getUsers } from "../controllers/userController.js";
 import { sendMailFromUserToTeam } from "../middlewares/nodemailer.js";
 const router = express.Router()
@@ -8,6 +8,8 @@ const router = express.Router()
 // Auth
 router.post('/login', login)
 router.post('/confirmEmail', confirmEmail)
+router.post('/emailVerify', emailVerify)
+router.post('/resetPassword', resetPassword)
 router.post('/signup', signup)
 
 // User
