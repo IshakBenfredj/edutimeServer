@@ -1,7 +1,8 @@
 import  express  from "express";
-import { signup, login, confirmEmail, emailVerify, resetPassword } from "../controllers/authController.js";
+import {  login, confirmEmail, emailVerify, resetPassword, signup } from "../controllers/authController.js";
 import { getUser, getUsers } from "../controllers/userController.js";
 import { sendMailFromUserToTeam } from "../middlewares/nodemailer.js";
+import { getCourseworks } from "../controllers/courseworkController.js";
 const router = express.Router()
 
 
@@ -15,6 +16,10 @@ router.post('/signup', signup)
 // User
 router.get('/getUser/:userId', getUser)
 router.get('/getUsers', getUsers)
+
+// Courseworks
+router.get('/getCourseworks', getCourseworks)
+
 
 
 router.post('/sendEmail', async (req,res) => {

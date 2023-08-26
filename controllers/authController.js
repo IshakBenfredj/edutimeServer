@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt, { hash } from 'bcrypt';
 import  dotenv  from "dotenv";
 import User from '../models/User.js';
 import sendMail from '../middlewares/nodemailer.js';
@@ -70,16 +70,14 @@ export const resetPassword = async (req, res) => {
 
 export const signup = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const formData = req.body
+        const file = req.file
+        formData.image = file.filename
 
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({
-            name,
-            email,
-            password: hashedPassword,
-        });
-        const savedUser = await newUser.save();
+        const hashedPassword = await bcrypt.hash(formData.password, salt);
+        formData.password = hashedPassword
+        const newUser = User.create(formData);
 
         res.status(201).json({ message: 'تم إنشاء الحساب بنجاح' });
     } catch (error) {

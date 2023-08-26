@@ -47,8 +47,8 @@ const fileFilter = (req,file,cb) => {
 let upload = multer({storage,fileFilter});
 
 // Routes
-app.use('/', generalRouters)
-app.use('/', upload.array('images',6), requireRouters)
+app.use('/', upload.single('image'), generalRouters)
+app.use('/', upload.single('image'), requireRouters)
 
 
 mongoose.connect(process.env.MONGODB_URL, {
