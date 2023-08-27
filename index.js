@@ -6,8 +6,8 @@ import  helmet  from "helmet";
 import  morgan  from "morgan";
 
 // Import Routes
-import  generalRouters  from './routes/generalRouters.js'
-import  requireRouters  from './routes/requireRouters.js'
+import  Routers  from './routes/Routers.js'
+// import  requireRouters  from './routes/requireRouters.js'
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -47,8 +47,8 @@ const fileFilter = (req,file,cb) => {
 let upload = multer({storage,fileFilter});
 
 // Routes
-app.use('/', upload.single('image'), generalRouters)
-app.use('/', upload.single('image'), requireRouters)
+app.use('/', upload.single('image'), Routers)
+// app.use('/', requireRouters)
 
 
 mongoose.connect(process.env.MONGODB_URL, {
