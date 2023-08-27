@@ -25,3 +25,17 @@ export const getUsers = async (req, res) => {
         res.status(400).json({ error: "Server Error" });
     }
 };
+
+export const addLikeCenter = async (req, res) => {
+    const {centerId}  = req.body
+    console.log(centerId);
+    try {
+        const center = await User.findById(centerId);
+        center.likes.push(req.user._id)
+        await center.save()
+        console.log(center);
+        res.status(201).json({ center });
+    } catch (error) {
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};

@@ -1,25 +1,14 @@
 import Coursework from '../models/Coursework.js'
 
 export const addCoursework = async (req, res) => {
-    const file = req.file;
-
-    const { userId, name, category, price, dateStart, hours, description } = req.body;
 
     try {
-        const coursework = new Coursework({
-            userId,
-            name,
-            category,
-            price,
-            dateStart,
-            hours,
-            image: file.filename,
-            description,
-        });
-
-        await coursework.save();
-
-        res.status(201).json({ message: "تم إضافة التدريب بنجاح" });
+        const formData = req.body;
+        const file = req.file;
+        formData.userId = req.user._id
+        formData.image = file.filename
+        const newUser = Coursework.create(formData);
+        res.status(201).json({ message: "تم إضافة الدورة بنجاح" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "خطأ بالسيرفر" });
@@ -34,6 +23,19 @@ export const getCourseworks = async (req, res) => {
     res.status(201).json({ courseworks });
     } catch (error) {
         console.error(error);
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};
+
+export const addLike = async (req, res) => {
+    const {courseworkId}  = req.body
+    try {
+        const coursework = await Coursework.findById(courseworkId);
+        coursework.likes.push(req.user._id)
+        console.log(coursework);
+        await coursework.save()
+        res.status(201).json({ coursework });
+    } catch (error) {
         res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 };

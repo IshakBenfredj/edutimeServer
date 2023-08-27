@@ -8,7 +8,7 @@ const courseworkSchema = new mongoose.Schema({
     price: { type: String, required: true },
     dateStart: { type: String, required: true },
     hours: { type: Number, required: true },
-    likes: { type: Number, default: 0 },
+    likes: { type: Array, default: [] },
     personsCount: { type: Number, default: 0 },
     commentsCount: { type: Number, default: 0 },
     image: { type: String, required: true },
