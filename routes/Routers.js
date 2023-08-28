@@ -4,7 +4,7 @@ import { addLikeCenter, getUser, getUsers } from "../controllers/userController.
 import { sendMailFromUserToTeam } from "../middlewares/nodemailer.js";
 import { addCoursework, addLike, getCourseworks } from "../controllers/courseworkController.js";
 import requireAuth from "../middlewares/requireAuth.js";
-import { addReservation } from "../controllers/reservationController.js";
+import { addReservation, getReservations } from "../controllers/reservationController.js";
 import { addComment, getComments } from "../controllers/commentController.js";
 
 const router = express.Router()
@@ -51,6 +51,7 @@ router.post('/addLike', addLike)
 
 // Reservation
 router.post('/reservation/:id', addReservation)
+router.get('/getReservations', getReservations)
 
 
 // Comment

@@ -13,3 +13,15 @@ export const addReservation = async (req, res) => {
         res.status(500).json({ error: "خطأ بالسيرفر" });
     }
 }
+
+export const getReservations = async (req, res) => {
+    try {
+        const allReservations = await Reservation.find();
+        const reservations = allReservations.reverse()
+
+    res.status(201).json({ reservations });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};
