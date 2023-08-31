@@ -1,10 +1,10 @@
 import  express  from "express";
 import {  login, confirmEmail, emailVerify, resetPassword, signup } from "../controllers/authController.js";
-import { addLikeCenter, getUser, getUsers } from "../controllers/userController.js";
+import { addLikeCenter, getUser, getUsers, updateUser, updatePhotoProfile } from "../controllers/userController.js";
 import { sendMailFromUserToTeam } from "../middlewares/nodemailer.js";
-import { addCoursework, addLike, getCourseworks } from "../controllers/courseworkController.js";
+import { addCoursework, addLike, deleteCoursework, getCourseworks, updateCoursework } from "../controllers/courseworkController.js";
 import requireAuth from "../middlewares/requireAuth.js";
-import { addReservation, getReservations } from "../controllers/reservationController.js";
+import { addReservation, getReservations, deleteReservation } from "../controllers/reservationController.js";
 import { addComment, getComments } from "../controllers/commentController.js";
 
 const router = express.Router()
@@ -37,21 +37,26 @@ router.post('/sendEmail', async (req,res) => {
     }
 })
 
+// Reservation
+router.get('/getReservations', getReservations)
 
 // Require
 router.use(requireAuth)
 
 // User
 router.post('/center/addLike', addLikeCenter)
+router.patch('/updateUser/:id', updateUser)
+router.patch('/updatePhotoProfile/:id', updatePhotoProfile)
 
 // Coursework
 router.post('/addCoursework', addCoursework)
-router.post('/addLike', addLike)
-// router.delete('/deleteCoursework/:id', deleteCoursework)
+router.post('/coursework/addLike', addLike)
+router.patch('/updateCoursework/:id', updateCoursework)
+router.delete('/deleteCoursework/:id', deleteCoursework)
 
 // Reservation
-router.post('/reservation/:id', addReservation)
-router.get('/getReservations', getReservations)
+router.post('/reservation/:centerId/:id', addReservation)
+router.delete('/deleteReservation/:id', deleteReservation)
 
 
 // Comment
