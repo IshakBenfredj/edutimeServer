@@ -27,19 +27,25 @@ export const getUsers = async (req, res) => {
     }
 };
 
-export const addLikeCenter = async (req, res) => {
-    const { centerId }  = req.body
+export const likeCenter = async (req, res) => {
+    const { centerId } = req.body;
     try {
         const center = await User.findById(centerId);
-        if (!center.likes.includes(req.user._id)) {
-            center.likes.push(req.user._id)
-            await center.save()
+        const userIndex = center.likes.indexOf(req.user._id);
+
+        if (userIndex === -1) {
+            center.likes.push(req.user._id);
+        } else {
+            center.likes.splice(userIndex, 1);
         }
+
+        await center.save();
         res.status(201).json({ center });
     } catch (error) {
         res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 };
+
 
 export const updateUser = async (req, res) => {
     const { info, type }  = req.body;
@@ -104,3 +110,16 @@ export const updatePhotoProfile = async (req,res) => {
         return res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 }
+
+export const resetNotify = async (req, res) => {
+    try {
+        const { id } = req.params ;
+        const user = await User.findById(id);
+        user.notifyCount = 0
+        await user.save()
+
+        res.status(200).json({ user });
+    } catch (error) {
+        res.status(400).json({ error: "Server Error" });
+    }
+};

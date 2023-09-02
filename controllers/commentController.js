@@ -27,3 +27,14 @@ export const getComments = async (req, res) => {
         res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 };
+
+export const deleteComment = async (req, res) => {
+    try {
+        const { id } = req.params
+        await Comment.findByIdAndDelete(id)
+        res.status(201).json({ message : 'تم حذف التعليق' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+}

@@ -1,4 +1,5 @@
 import Reservation from '../models/Reservation.js'
+import User from '../models/User.js';
 
 export const addReservation = async (req, res) => {
 
@@ -8,7 +9,10 @@ export const addReservation = async (req, res) => {
         reservation.courseworkId = id
         reservation.centerId = centerId
         reservation.reservator = req.user._id
-        Reservation.create(reservation);
+        await Reservation.create(reservation);
+        const user = await User.findById(centerId);
+        user.notifyCount = user.notifyCount + 1
+        await user.save()
         res.status(201).json({ message : "تم إرسال الحجز بنجاح" });
     } catch (error) {
         console.error(error);

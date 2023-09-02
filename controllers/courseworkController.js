@@ -28,19 +28,25 @@ export const getCourseworks = async (req, res) => {
     }
 };
 
-export const addLike = async (req, res) => {
+export const like = async (req, res) => {
     const { courseworkId }  = req.body
     try {
         const coursework = await Coursework.findById(courseworkId);
-        if (!coursework.likes.includes(req.user._id)) {
-            coursework.likes.push(req.user._id)
-            await coursework.save()
+        const userIndex = coursework.likes.indexOf(req.user._id);
+        
+        if (userIndex === -1) {
+            coursework.likes.push(req.user._id);
+        } else {
+            coursework.likes.splice(userIndex, 1);
         }
+        
+        await coursework.save();
         res.status(201).json({ coursework });
     } catch (error) {
         res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 };
+
 
 export const updateCoursework = async (req, res) => {
     try {
