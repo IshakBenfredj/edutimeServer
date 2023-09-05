@@ -1,3 +1,5 @@
+import Coursework from "../models/Coursework.js";
+import Reservation from "../models/Reservation.js";
 import User from "../models/User.js"
 import bcrypt from 'bcrypt'
 
@@ -121,5 +123,22 @@ export const resetNotify = async (req, res) => {
         res.status(200).json({ user });
     } catch (error) {
         res.status(400).json({ error: "Server Error" });
+    }
+};
+
+export const deleteCenter = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const center = await User.findById(id);
+
+        await Reservation.deleteMany({ centerId: center._id });
+        await Coursework.deleteMany({ userId: center._id });
+
+        await User.findByIdAndDelete(id);
+
+        res.status(201).json({ message: 'تم حذف المركز وكل الحجوزات والدورات المرتبطة به' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 };

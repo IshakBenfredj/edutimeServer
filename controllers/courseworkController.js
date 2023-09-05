@@ -47,7 +47,6 @@ export const like = async (req, res) => {
     }
 };
 
-
 export const updateCoursework = async (req, res) => {
     try {
         const { id } = req.params

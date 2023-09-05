@@ -1,12 +1,13 @@
 import  express  from "express";
 import {  login, confirmEmail, emailVerify, resetPassword, signup } from "../controllers/authController.js";
-import { likeCenter, getUser, getUsers, updateUser, updatePhotoProfile, resetNotify } from "../controllers/userController.js";
+import { likeCenter, getUser, getUsers, updateUser, updatePhotoProfile, resetNotify, deleteCenter } from "../controllers/userController.js";
 import { sendMailFromUserToTeam } from "../middlewares/nodemailer.js";
 import { addCoursework, like, deleteCoursework, getCourseworks, updateCoursework } from "../controllers/courseworkController.js";
 import requireAuth from "../middlewares/requireAuth.js";
 import { addReservation, getReservations, deleteReservation } from "../controllers/reservationController.js";
 import { addComment, deleteComment, getComments } from "../controllers/commentController.js";
 import { getOffers } from "../controllers/offersController.js";
+import { addArticle, getArticles, getPostById } from "../controllers/articleController.js";
 
 const router = express.Router()
 
@@ -45,6 +46,10 @@ router.get('/getReservations', getReservations)
 // Offers
 router.get('/getOffers', getOffers)
 
+// Articles
+router.get('/getArticles', getArticles) 
+router.get('/getPostById/:id', getPostById) 
+
 // Require
 router.use(requireAuth)
 
@@ -52,6 +57,7 @@ router.use(requireAuth)
 router.post('/center/like', likeCenter)
 router.patch('/updateUser/:id', updateUser)
 router.patch('/updatePhotoProfile/:id', updatePhotoProfile)
+router.delete('/deleteCenter/:id', deleteCenter)
 
 // Coursework
 router.post('/addCoursework', addCoursework)
@@ -65,7 +71,10 @@ router.delete('/deleteReservation/:id', deleteReservation)
 
 
 // Comment
-router.post('/addComment', addComment)
+router.post('/addComment', addComment) 
 router.delete('/deleteComment/:id', deleteComment)
+
+// Articles
+router.post('/addArticle/:userId', addArticle) 
 
 export default router;
