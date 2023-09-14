@@ -54,4 +54,24 @@ const transporter = nodemailer.createTransport({
         );
     }
 
+    export const sendMailPayment = (email, title,message)=>{
+        transporter.sendMail({
+            from: process.env.EMAIL ,
+            to: `${email}`,
+            subject: `${title}`,
+            html: `
+                    <div style="direction: rtl; border: 1px solid #ccc; padding: 20px; border-radius: 5px; width:fit-content; margin: auto; background: #f1f5f9;">
+                        <h3 style="font-style: italic;">${message}</h3>
+                    </div>
+                `
+            },
+            (error, info) => {
+                if (error) {
+                    console.log('Error sending email:', error);
+                } else {
+                    console.log('Email sent:', info.response);
+                }}
+        );
+    }
+
 export default sendMail

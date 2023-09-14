@@ -1,5 +1,6 @@
-
 import mongoose from 'mongoose';
+import User from './User.js';
+import { sendMailPayment } from '../middlewares/nodemailer.js';
 
 const courseworkSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -13,8 +14,12 @@ const courseworkSchema = new mongoose.Schema({
     commentsCount: { type: Number, default: 0 },
     image: { type: String, required: true },
     description: { type: String, required: true },
-}, { timestamps: true });
+    activation: { type: Boolean, default: false },
+    activationDate: Date,
+    createdAt: { type: Date, default: new Date() }
+});
 
 const Coursework = mongoose.model('Coursework', courseworkSchema);
 
 export default Coursework;
+

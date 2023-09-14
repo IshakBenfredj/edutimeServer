@@ -34,7 +34,7 @@ export const getArticles = async (req,res) => {
     }
 }
 
-export const getPostById = async (req,res) => {
+export const getArticleById = async (req,res) => {
     try {
         const { id } = req.params;
         const article = await Article.findById(id);
@@ -49,31 +49,60 @@ export const getPostById = async (req,res) => {
     }
 }
 
-// export const getAdminPost = async (req,res) => {
-//     try {
-//         const admin = await User.findOne({ typeOfUser : 'admin'});
+export const deleteArticle = async (req,res) => {
+    try {
+        const { id } = req.params;
+        await Article.findByIdAndDelete(id);
 
-//         if(admin) {
-//             const post = await Post.findOne({ userId : admin._id});
-//             res.status(200).json({ post });
-//         } else {
-//             res.status(200).json({ message:'no posts' });
-//         }
-    
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: 'Server Error' });
-//     }
-// }
+        res.status(200).json({ message : 'تم حذف المقال' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+}
 
-// export const removePost = async (req,res) => {
-//     try {
-//         const { postId } = req.params;
-//         const post = await Post.findByIdAndRemove(postId);
+export const likeArticle = async (req, res) => {
+    const {id} = req.body;
+    try {
+        const article = await Article.findById(id);
+        const userIndex = article.likes.indexOf(req.user._id);
+        const userIndexDis = article.disLikes.indexOf(req.user._id);
 
-//         res.status(200).json({ message : 'تم حذف المنشور',post });
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ message: 'Server Error' });
-//     }
-// }
+        if (userIndex === -1) {
+            article.likes.push(req.user._id);
+            if (userIndexDis !== -1) {
+                article.disLikes.splice(userIndexDis, 1);
+            }
+        } else {
+            article.likes.splice(userIndex, 1);
+        }
+
+        await article.save();
+        res.status(201).json({ article });
+    } catch (error) {
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};
+
+export const disLikeArticle = async (req, res) => {
+    const {id} = req.body;
+    try {
+        const article = await Article.findById(id);
+        const userIndex = article.likes.indexOf(req.user._id);
+        const userIndexDis = article.disLikes.indexOf(req.user._id);
+
+        if (userIndexDis === -1) {
+            article.disLikes.push(req.user._id);
+            if (userIndex !== -1) {
+                article.likes.splice(userIndex, 1);
+            }
+        } else {
+            article.disLikes.splice(userIndexDis, 1);
+        }
+
+        await article.save();
+        res.status(201).json({ article });
+    } catch (error) {
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};

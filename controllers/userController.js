@@ -48,7 +48,6 @@ export const likeCenter = async (req, res) => {
     }
 };
 
-
 export const updateUser = async (req, res) => {
     const { info, type }  = req.body;
     const { id }  = req.params;

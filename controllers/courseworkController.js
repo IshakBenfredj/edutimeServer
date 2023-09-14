@@ -1,5 +1,7 @@
+import { sendMailPayment } from '../middlewares/nodemailer.js';
 import Coursework from '../models/Coursework.js'
 import Reservation from '../models/Reservation.js'
+import User from '../models/User.js'
 
 export const addCoursework = async (req, res) => {
 
@@ -85,5 +87,42 @@ export const deleteCoursework = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};
+
+export const updateCourseworksPayment = async (req, res) => {
+    const {id}  = req.body;
+    try {
+      console.log(`id ${id}`);
+
+      const course = await Coursework.findById(id)
+      const user = await User.findById(course.userId)
+      course.activation = false
+      course.activationDate = ''
+      await course.save()
+      
+    async function sendPaymentEnd() {
+        try {
+            const title = 'إنتهاء فترة الإشتراك';
+            
+            const message = `
+            يؤسفنا أن نعلمك أنه قد تم إنتهاء فترة الإشتراك الخاصة بدورة :
+            <h2 style='color: red'>${course.name}</h2>
+                يمكنك دوما تجديد إشتراكك عبر منصتنا <b>edutime</b>
+            `;
+    
+            sendMailPayment(user.email, title, message);
+    
+            console.log('Email sent successfully');
+        } catch (error) {
+            console.error('Error sending email:', error);
+        }
+    }
+  
+    await sendPaymentEnd();  
+      res.status(201).json(course);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 };

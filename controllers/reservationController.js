@@ -1,3 +1,4 @@
+import Coursework from '../models/Coursework.js';
 import Reservation from '../models/Reservation.js'
 import User from '../models/User.js';
 
@@ -5,9 +6,10 @@ export const addReservation = async (req, res) => {
 
     try {
         const reservation = req.body;
-        const { id,centerId }= req.params;
+        const { id }= req.params;
+        const course = await Coursework.findById(id)
         reservation.courseworkId = id
-        reservation.centerId = centerId
+        reservation.centerId = course.userId
         reservation.reservator = req.user._id
         await Reservation.create(reservation);
         const user = await User.findById(centerId);

@@ -11,5 +11,3 @@ const offerSchema = new Scheme({
 const Offer = mongoose.model('Offer', offerSchema);
 
 export default Offer
-
-

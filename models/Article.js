@@ -5,8 +5,15 @@ const articleSchema = new Schema({
     title: String,
     description: String,
     image : String,
-    userId: String,
-    likes:[ String ],
+    userId: mongoose.Schema.Types.ObjectId,
+    likes:{
+        type: [ String ],
+        default: []
+    },
+    disLikes:{
+        type: [ String ],
+        default: []
+    },
 },{timestamps: true});
 
 const Article = mongoose.model('Article', articleSchema);
