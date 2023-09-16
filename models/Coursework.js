@@ -22,4 +22,3 @@ const courseworkSchema = new mongoose.Schema({
 const Coursework = mongoose.model('Coursework', courseworkSchema);
 
 export default Coursework;
-

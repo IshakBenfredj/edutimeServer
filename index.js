@@ -4,6 +4,8 @@ import  mongoose  from "mongoose";
 import  cors  from "cors";
 import  helmet  from "helmet";
 import  morgan  from "morgan";
+import cron from 'node-cron'
+import { updateCourseworksPayment } from "./controllers/courseworkController.js";
 
 // Import Routes
 import  Routers  from './routes/Routers.js'
@@ -20,6 +22,16 @@ app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
 app.use(morgan("common"));
 app.use('/uploads', express.static('uploads'));
+
+cron.schedule('0 0 * * *', async () => {
+    try {
+      console.log('Running scheduled task...');
+      await updateCourseworksPayment();
+      console.log('Scheduled task completed.');
+    } catch (error) {
+      console.error('Error in scheduled task:', error);
+    }
+});
 
 // Multer
 import multer from "multer";

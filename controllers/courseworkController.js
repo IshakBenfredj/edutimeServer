@@ -91,36 +91,39 @@ export const deleteCoursework = async (req, res) => {
 };
 
 export const updateCourseworksPayment = async (req, res) => {
-    const {id}  = req.body;
     try {
-      console.log(`id ${id}`);
-
-      const course = await Coursework.findById(id)
-      const user = await User.findById(course.userId)
-      course.activation = false
-      course.activationDate = ''
-      await course.save()
-      
-    async function sendPaymentEnd() {
-        try {
-            const title = 'إنتهاء فترة الإشتراك';
-            
-            const message = `
-            يؤسفنا أن نعلمك أنه قد تم إنتهاء فترة الإشتراك الخاصة بدورة :
-            <h2 style='color: red'>${course.name}</h2>
-                يمكنك دوما تجديد إشتراكك عبر منصتنا <b>edutime</b>
-            `;
-    
-            sendMailPayment(user.email, title, message);
-    
-            console.log('Email sent successfully');
-        } catch (error) {
-            console.error('Error sending email:', error);
-        }
-    }
+      const courses = await Coursework.find();
   
-    await sendPaymentEnd();  
-      res.status(201).json(course);
+      for (const e of courses) {
+        if (e.activation && e.activationDate <= new Date()) {
+          e.activation = false;
+          e.activationDate = null;
+          await e.save();
+          const user = await User.findById(e.userId);
+  
+          async function sendPaymentEnd() {
+            try {
+              const title = 'إنتهاء فترة الإشتراك';
+  
+              const message = `
+                يؤسفنا أن نعلمك أنه قد تم إنتهاء فترة الإشتراك الخاصة بدورة :
+                <h2 style='color: red'>${e.name}</h2>
+                يمكنك دوما تجديد إشتراكك عبر منصتنا <b>edutime</b>
+              `;
+  
+              sendMailPayment(user.email, title, message);
+  
+              console.log('Email sent successfully');
+            } catch (error) {
+              console.error('Error sending email:', error);
+            }
+          }
+  
+          await sendPaymentEnd();
+        }
+      }
+  
+      res.status(201).json(courses);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'خطأ بالسيرفر' });

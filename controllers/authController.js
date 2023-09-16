@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt, { hash } from 'bcrypt';
+import bcrypt from 'bcrypt';
 import  dotenv  from "dotenv";
 import User from '../models/User.js';
 import sendMail from '../middlewares/nodemailer.js';

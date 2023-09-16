@@ -27,7 +27,6 @@ router.patch('/resetNotify/:id', resetNotify)
 
 // Courseworks
 router.get('/getCourseworks', getCourseworks)
-router.put('/updateCourseworksPayment', updateCourseworksPayment)
 
 // Comments
 router.get('/getComments', getComments)
