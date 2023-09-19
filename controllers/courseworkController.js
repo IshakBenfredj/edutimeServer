@@ -95,7 +95,7 @@ export const updateCourseworksPayment = async (req, res) => {
       const courses = await Coursework.find();
   
       for (const e of courses) {
-        if (e.activation && e.activationDate <= new Date()) {
+        if (e.activation && e.activationDate <= Date()) {
           e.activation = false;
           e.activationDate = null;
           await e.save();
