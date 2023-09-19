@@ -100,7 +100,7 @@ export const login = async (req, res) => {
         }
 
         const token = createToken(user._id);
-        delete user.password
+        delete user.password;
         res.status(200).json({ user, token });
     } catch (error) {
         return res.status(500).json({ error: "خطأ بالسيرفر,حاول مجددا" });
