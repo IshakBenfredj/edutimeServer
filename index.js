@@ -23,7 +23,7 @@ app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
 app.use(morgan("common"));
 app.use('/uploads', express.static('uploads'));
 
-cron.schedule('45 10 * * *', async () => {
+cron.schedule('0 11 * * *', async () => {
     try {
       console.log('Running scheduled task...');
       await updateCourseworksPayment();
