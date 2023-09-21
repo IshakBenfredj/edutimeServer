@@ -30,3 +30,17 @@ export const updateOffers = async (req, res) => {
         res.status(500).json({ error: 'خطأ بالسيرفر' });
     }
 };
+
+export const updateLandingImage = async (req, res) => {
+    try {
+        const formData = req.body;
+        const uploadedFile = req.file;
+        const offers = await Offer.find();
+        offers[0].image = uploadedFile.filename
+        await offers[0].save()
+        res.status(201).json({message : 'تم التحديث'});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};

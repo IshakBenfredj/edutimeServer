@@ -6,7 +6,7 @@ import { addCoursework, like, deleteCoursework, getCourseworks, updateCoursework
 import requireAuth from "../middlewares/requireAuth.js";
 import { addReservation, getReservations, deleteReservation, accpetRefuseRes } from "../controllers/reservationController.js";
 import { addComment, deleteComment, getComments } from "../controllers/commentController.js";
-import { getOffers, updateOffers } from "../controllers/offersController.js";
+import { getOffers, updateLandingImage, updateOffers } from "../controllers/offersController.js";
 import { addArticle, deleteArticle, getArticles, getArticleById, likeArticle, disLikeArticle } from "../controllers/articleController.js";
 import { accept, createPayment, getPayments, refuse } from "../controllers/paymentController.js";
 
@@ -86,6 +86,7 @@ router.patch('/disLikeArticle', disLikeArticle)
 
 // Offers
 router.put('/updateOffers', updateOffers)
+router.put('/updateLandingImage', updateLandingImage)
 
 // Payments
 router.post('/createPayment', createPayment)
