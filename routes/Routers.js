@@ -4,7 +4,7 @@ import { likeCenter, getUser, getUsers, updateUser, updatePhotoProfile, resetNot
 import { sendMailFromUserToTeam } from "../middlewares/nodemailer.js";
 import { addCoursework, like, deleteCoursework, getCourseworks, updateCoursework, updateCourseworksPayment } from "../controllers/courseworkController.js";
 import requireAuth from "../middlewares/requireAuth.js";
-import { addReservation, getReservations, deleteReservation } from "../controllers/reservationController.js";
+import { addReservation, getReservations, deleteReservation, accpetRefuseRes } from "../controllers/reservationController.js";
 import { addComment, deleteComment, getComments } from "../controllers/commentController.js";
 import { getOffers, updateOffers } from "../controllers/offersController.js";
 import { addArticle, deleteArticle, getArticles, getArticleById, likeArticle, disLikeArticle } from "../controllers/articleController.js";
@@ -71,6 +71,7 @@ router.delete('/deleteCoursework/:id', deleteCoursework)
 // Reservation
 router.post('/reservation/:id', addReservation)
 router.delete('/deleteReservation/:id', deleteReservation)
+router.put('/accpetRefuseRes/:etat', accpetRefuseRes)
 
 
 // Comment

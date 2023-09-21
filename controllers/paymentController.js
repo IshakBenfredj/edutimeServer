@@ -101,6 +101,10 @@ export const accept = async (req, res) => {
       });
       
       const courses = await Promise.all(coursePromises);
+      function formatDate(date) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('ar-AR', options);
+      }
 
       const title = 'قبول طلب التفعيل';
       
@@ -113,6 +117,7 @@ export const accept = async (req, res) => {
             </li>
           `).join('')}
         </ul>
+        حيث تنتهي فترة الإشتراك بتاريخ ${formatDate(courses[0].activationDate)}
       `;
 
       // Assuming sendMailPayment is a function that sends the email
