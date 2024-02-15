@@ -23,7 +23,19 @@ export const getCourseworks = async (req, res) => {
         const allCourseworks = await Coursework.find();
         const courseworks = allCourseworks.reverse()
 
-    res.status(201).json({ courseworks });
+    res.status(201).json(courseworks);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'خطأ بالسيرفر' });
+    }
+};
+
+export const getCoursework = async (req, res) => {
+    try {
+        const allCourseworks = await Coursework.find();
+        const courseworks = allCourseworks.reverse()
+
+    res.status(201).json(courseworks);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'خطأ بالسيرفر' });
@@ -31,7 +43,7 @@ export const getCourseworks = async (req, res) => {
 };
 
 export const like = async (req, res) => {
-    const { courseworkId }  = req.body
+    const { id }  = req.params
     try {
         const coursework = await Coursework.findById(courseworkId);
         const userIndex = coursework.likes.indexOf(req.user._id);

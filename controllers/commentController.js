@@ -21,7 +21,7 @@ export const getComments = async (req, res) => {
         const allComments = await Comment.find();
         const comments = allComments.reverse()
 
-    res.status(201).json({ comments });
+    res.status(201).json(comments);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'خطأ بالسيرفر' });

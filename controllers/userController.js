@@ -4,10 +4,10 @@ import User from "../models/User.js"
 import bcrypt from 'bcrypt'
 
 export const getUser = async (req, res) => {
-    const { userId } = req.params; 
+    const { id } = req.params; 
 
     try {
-        const user = await User.findById(userId);
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ error: "user doesn't exist" });
         }
@@ -23,16 +23,16 @@ export const getUsers = async (req, res) => {
         const usersFind = await User.find();
         const users = usersFind.reverse();
 
-        res.status(200).json({ users });
+        res.status(200).json(users);
     } catch (error) {
         res.status(400).json({ error: "Server Error" });
     }
 };
 
 export const likeCenter = async (req, res) => {
-    const { centerId } = req.body;
+    const { id } = req.params;
     try {
-        const center = await User.findById(centerId);
+        const center = await User.findById(id);
         const userIndex = center.likes.indexOf(req.user._id);
 
         if (userIndex === -1) {
@@ -51,7 +51,6 @@ export const likeCenter = async (req, res) => {
 export const updateUser = async (req, res) => {
     const { info, type }  = req.body;
     const { id }  = req.params;
-    
     try {
         if (!info) {
             return res.status(404).json({ error: 'يجب ملئ الحقل' });
@@ -62,9 +61,10 @@ export const updateUser = async (req, res) => {
             case 'name':
                 user.name  = info
                 await user.save()
-            break;
-            case 'email':
-                const exist = await User.find({email : info})
+                break;
+                case 'email':
+                    const exist = await User.findOne({email : info})
+                    console.log(exist);
                 if (exist) {
                     return res.status(400).json({ error: 'إيميل موجود بالفعل' });
                 }

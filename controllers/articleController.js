@@ -27,7 +27,7 @@ export const getArticles = async (req,res) => {
         const all_articles = await Article.find();
         const articles = all_articles.reverse()
     
-        res.status(200).json({ articles });
+        res.status(200).json(articles);
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Server Error' });
@@ -62,7 +62,7 @@ export const deleteArticle = async (req,res) => {
 }
 
 export const likeArticle = async (req, res) => {
-    const {id} = req.body;
+    const { id } = req.params;
     try {
         const article = await Article.findById(id);
         const userIndex = article.likes.indexOf(req.user._id);
@@ -85,7 +85,7 @@ export const likeArticle = async (req, res) => {
 };
 
 export const disLikeArticle = async (req, res) => {
-    const {id} = req.body;
+    const { id } = req.params;
     try {
         const article = await Article.findById(id);
         const userIndex = article.likes.indexOf(req.user._id);

@@ -1,75 +1,50 @@
-import  express  from "express";
-import  dotenv  from "dotenv";
-import  mongoose  from "mongoose";
-import  cors  from "cors";
-import  helmet  from "helmet";
-import  morgan  from "morgan";
-import cron from 'node-cron'
-import { updateCourseworksPayment } from "./controllers/courseworkController.js";
+import express from "express";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+// import cron from "node-cron";
 
 // Import Routes
-import  Routers  from './routes/Routers.js'
-// import  requireRouters  from './routes/requireRouters.js'
+import authRoutes from "./routes/auth-routes.js";
+import courseRoutes from "./routes/course-routes.js";
+import commentRoutes from "./routes/comment-routes.js";
+import reservationRoutes from "./routes/reservation-routes.js";
+import userRoutes from "./routes/user-routes.js";
+import articleRoutes from "./routes/article-routes.js";
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8800;
 
 dotenv.config();
 
-app.use(express.json());
-app.use(cors());
+// app.use(express.json());
 app.use(helmet());
-app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
-app.use('/uploads', express.static('uploads'));
-
-cron.schedule('0 0 * * *', async () => {
-    try {
-      console.log('Running scheduled task...');
-      await updateCourseworksPayment();
-      console.log('Scheduled task completed.');
-    } catch (error) {
-      console.error('Error in scheduled task:', error);
-    }
-});
-
-// Multer
-import multer from "multer";
-import {v4 as uuidv4} from "uuid";
-import path from "path";
-
-const storage = multer.diskStorage({
-    destination : function(req,file,cb){
-        cb(null,'./uploads');
-    },
-    filename: function(req,file,cb){
-        cb(null,uuidv4()+'-'+Date.now()+path.extname(file.originalname));
-    }
-});
-
-const fileFilter = (req,file,cb) => {
-    const allowedFileTypes = ['image/jpeg','image/jpg','image/png', 'image/webp'];
-    if(allowedFileTypes.includes(file.mimetype)) {
-        cb(null,true)
-    } else {
-        cb(null,false)
-    }
-}
-
-let upload = multer({storage,fileFilter});
+app.use("/uploads", express.static("uploads"));
+app.use(cors());
+app.use(express.json());
 
 // Routes
-app.use('/', upload.single('image'), Routers)
-// app.use('/', requireRouters)
+app.use("/auth", authRoutes);
+app.use("/courses", courseRoutes);
+app.use("/users", userRoutes);
+app.use("/reservations", reservationRoutes);
+app.use("/articles", articleRoutes);
+app.use("/comments", commentRoutes);
 
-
-mongoose.connect(process.env.MONGODB_URL, {
+mongoose
+  .connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-}).then(() => {
+  })
+  .then(() => {
     app.listen(PORT, () => {
-        console.log('connected to db & listening on port',PORT)
-    })
-}).catch ((error) => {
-    console.log(error) 
-})
+      console.log("connected to db & listening on port", PORT);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });

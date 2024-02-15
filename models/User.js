@@ -18,15 +18,12 @@ const userSchema = new Scheme({
     },
     image : {
         type : String,
-        required : true
     },
     address : {
         type : String,
-        required : true
     },
     phone : {
         type : String,
-        required : true
     },
     likes : {
         type : [String],
@@ -34,7 +31,7 @@ const userSchema = new Scheme({
     },
     commentsCount: {
         type: Number,
-        default: 0 
+        default: 0
     },
     notifyCount: {
         type: Number,
