@@ -74,18 +74,24 @@ export const resetPassword = async (req, res) => {
 
 export const signup = async (req, res) => {
   try {
+    // Create Account
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(req.body.password, salt);
     const newUser = new User({ ...req.body, password: hash });
     await newUser.save();
 
-    res.status(201).json({ message: "تم إنشاء الحساب بنجاح" });
+    // Login 
+    const user = await User.findOne({ email: req.body.email });
+    const token = createToken(user._id);
+    delete user.password;
+
+    res.status(201).json({ message: "تم إنشاء الحساب بنجاح",user,token });
   } catch (error) {
     res.status(500).json({ error: "خطأ بالسيرفر" });
   }
 };
 
-export const login = async (req, res,next) => {
+export const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
@@ -101,10 +107,35 @@ export const login = async (req, res,next) => {
 
     const token = createToken(user._id);
     delete user.password;
-    
-    res.status(201).json({user,token});
-    next()
+
+    res.status(201).json({ user, token });
+    next();
   } catch (error) {
     return res.status(500).json({ error: "خطأ بالسيرفر,حاول مجددا" });
+  }
+};
+
+export const googleAuth = async (req, res, next) => {
+  try {
+    const { googleUser } = req.body;
+    console.log(googleUser);
+    const user = await User.findOne({ email: googleUser.email });
+    if (user) {
+      const token = createToken(user._id);
+      res.status(200).json({ user, token });
+    } else {
+      const newUser = new User({
+        name: googleUser.displayName,
+        email: googleUser.email,
+        image: googleUser.photoURL ,
+        phone: googleUser.phoneNumber ,
+        fromGoogle: true
+      });
+      const savedUser = await newUser.save();
+      const token = createToken(user._id);
+      res.status(200).json({ savedUser, token });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err });
   }
 };

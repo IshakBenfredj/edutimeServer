@@ -1,6 +1,6 @@
 import  express  from "express";
 import requireAuth from "../middlewares/requireAuth.js";
-import { deleteCenter, getUser, getUsers, likeCenter, resetNotify, updatePhotoProfile, updateUser } from "../controllers/userController.js";
+import { deleteCenter, getUser, getUsers, likeCenter, resetNotify, updatePhotoProfile, updateType, updateUser } from "../controllers/userController.js";
 const router = express.Router()
 
 router.get('/', getUsers)
@@ -9,6 +9,7 @@ router.put('/resetNotify/:id', resetNotify)
 
 router.post('/like/:id',requireAuth, likeCenter)
 router.put('/update',requireAuth, updateUser)
+router.put('/updateType/:id',requireAuth, updateType)
 router.put('/updatePhotoProfile',requireAuth, updatePhotoProfile)
 router.delete('/delete/:id',requireAuth, deleteCenter)
 
