@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import Coursework from "../models/Coursework.js";
 import Reservation from "../models/Reservation.js";
 import User from "../models/User.js";
@@ -12,7 +13,7 @@ export const getUser = async (req, res) => {
       return res.status(404).json({ error: "user doesn't exist" });
     }
 
-    res.status(200).json({ user });
+    res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ error: "Server Error" });
   }
@@ -29,20 +30,21 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const likeCenter = async (req, res) => {
+export const like = async (req, res) => {
   const { id } = req.params;
   try {
-    const center = await User.findById(id);
-    const userIndex = center.likes.indexOf(req.user._id);
+    console.log(req.user._id);
+    const user = await User.findById(id);
+    const userIndex = user.likes.indexOf(req.user._id);
 
     if (userIndex === -1) {
-      center.likes.push(req.user._id);
+      user.likes.push(req.user._id);
     } else {
-      center.likes.splice(userIndex, 1);
+      user.likes.splice(userIndex, 1);
     }
+    await user.save();
 
-    await center.save();
-    res.status(201).json({ center });
+    res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ error: "خطأ بالسيرفر" });
   }
@@ -121,7 +123,7 @@ export const updateType = async (req, res) => {
     user.type = type;
     await user.save();
     if (!user.fromGoogle) {
-        delete user.password
+      delete user.password;
     }
     res.status(200).json(user);
   } catch (error) {

@@ -139,3 +139,14 @@ export const googleAuth = async (req, res, next) => {
     res.status(500).json({ error: err });
   }
 };
+
+export const getAuthUser = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { _id } = jwt.verify(token, process.env.SECRET);
+    const user = await User.findOne({ _id })
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(401).json({ error: "Server Error" });
+  }
+};
