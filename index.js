@@ -19,11 +19,10 @@ const PORT = process.env.PORT || 8800;
 
 dotenv.config();
 
-// app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
-app.use("/uploads", express.static("uploads"));
+
 app.use(cors());
 app.use(express.json());
 

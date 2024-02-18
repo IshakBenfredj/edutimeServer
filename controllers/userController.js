@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import Coursework from "../models/Coursework.js";
 import Reservation from "../models/Reservation.js";
 import User from "../models/User.js";

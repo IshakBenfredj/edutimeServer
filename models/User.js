@@ -29,14 +29,6 @@ const userSchema = new Scheme({
     type: [String],
     default: [],
   },
-  commentsCount: {
-    type: Number,
-    default: 0,
-  },
-  notifyCount: {
-    type: Number,
-    default: 0,
-  },
   password: {
     type: String,
   },
