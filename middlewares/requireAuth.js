@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+const jwt = require('jsonwebtoken');
+const User = require('../models/User.js');
 
 const requireAuth = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -17,8 +17,8 @@ const requireAuth = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    res.status(401).json({ error: 'Request is not authorized' });
+    res.status(401).json({ error: 'الطلب غير مصرح به' });
   }
 };
 
-export default requireAuth;
+module.exports = requireAuth;

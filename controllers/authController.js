@@ -1,15 +1,15 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-import User from "../models/User.js";
-import sendMail from "../middlewares/nodemailer.js";
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const dotenv = require("dotenv");
+const User = require("../models/User.js");
+const sendMail = require("../middlewares/nodemailer.js");
 dotenv.config();
 
 const generateToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET);
 };
 
-export const signup = async (req, res) => {
+const signup = async (req, res) => {
   try {
     // Create Account
     const salt = await bcrypt.genSalt(10);
@@ -26,7 +26,7 @@ export const signup = async (req, res) => {
   }
 };
 
-export const login = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
@@ -49,7 +49,7 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const googleAuth = async (req, res, next) => {
+const googleAuth = async (req, res, next) => {
   try {
     const { googleUser } = req.body;
     const user = await User.findOne({ email: googleUser.email });
@@ -73,7 +73,7 @@ export const googleAuth = async (req, res, next) => {
   }
 };
 
-export const getAuthUser = async (req, res) => {
+const getAuthUser = async (req, res) => {
   try {
     const { token } = req.params;
 
@@ -96,7 +96,7 @@ export const getAuthUser = async (req, res) => {
   }
 };
 
-export const confirmEmail = async (req, res) => {
+const confirmEmail = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
@@ -119,7 +119,7 @@ export const confirmEmail = async (req, res) => {
   }
 };
 
-export const emailVerify = async (req, res) => {
+const emailVerify = async (req, res) => {
   try {
     const { email } = req.body;
 
@@ -142,7 +142,7 @@ export const emailVerify = async (req, res) => {
   }
 };
 
-export const resetPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   try {
     const { password, id } = req.body;
 
@@ -157,4 +157,14 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "خطأ بالسيرفر" });
   }
+};
+
+module.exports = {
+  signup,
+  login,
+  googleAuth,
+  getAuthUser,
+  confirmEmail,
+  emailVerify,
+  resetPassword,
 };

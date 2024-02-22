@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-const Scheme = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const userSchema = new Scheme({
+const userSchema = new Schema({
   type: {
     type: String,
   },
@@ -25,15 +25,12 @@ const userSchema = new Scheme({
   phone: {
     type: String,
   },
-  likes: {
+  followers: {
     type: [String],
     default: [],
   },
   password: {
     type: String,
-  },
-  isMan: {
-    type: Boolean,
   },
   bio: {
     type: String,
@@ -42,8 +39,34 @@ const userSchema = new Scheme({
     type: Boolean,
     default: false,
   },
+  checkmark: {
+    type: Boolean,
+    default: false,
+  },
+  private: {
+    email: {
+      type: Boolean,
+      default: false,
+    },
+    phone: {
+      type: Boolean,
+      default: false,
+    },
+    address: {
+      type: Boolean,
+      default: false,
+    },
+    followers: {
+      type: Boolean,
+      default: false,
+    },
+    following: {
+      type: Boolean,
+      default: false,
+    },
+  },
 });
 
 const User = mongoose.model("User", userSchema);
 
-export default User;
+module.exports = User;

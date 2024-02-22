@@ -1,13 +1,14 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   addArticle,
   deleteArticle,
   disLikeArticle,
   getArticleById,
   getArticles,
   likeArticle,
-} from "../controllers/articleController.js";
-import requireAuth from "../middlewares/requireAuth.js";
+} = require("../controllers/articleController.js");
+const requireAuth = require("../middlewares/requireAuth.js");
+
 const router = express.Router();
 
 router.get("/", getArticles);
@@ -17,4 +18,4 @@ router.delete("/delete/:id", requireAuth, deleteArticle);
 router.patch("/like/:id", requireAuth, likeArticle);
 router.patch("/disLike/:id", requireAuth, disLikeArticle);
 
-export default router;
+module.exports = router;

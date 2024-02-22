@@ -1,9 +1,10 @@
-import Coursework from "../models/Coursework.js";
-import Reservation from "../models/Reservation.js";
-import User from "../models/User.js";
-import bcrypt from "bcrypt";
+const Coursework = require("../models/Coursework.js");
+const Reservation = require("../models/Reservation.js");
+const User = require("../models/User.js");
+const uploadImage = require("../middlewares/uploadImage.js");
+const bcrypt = require("bcrypt");
 
-export const getUser = async (req, res) => {
+const getUser = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -18,7 +19,7 @@ export const getUser = async (req, res) => {
   }
 };
 
-export const getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
   try {
     const usersFind = await User.find();
     const users = usersFind.reverse();
@@ -29,17 +30,16 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const like = async (req, res) => {
+const like = async (req, res) => {
   const { id } = req.params;
   try {
-    console.log(req.user._id);
     const user = await User.findById(id);
-    const userIndex = user.likes.indexOf(req.user._id);
+    const userIndex = user.followers.indexOf(req.user._id);
 
     if (userIndex === -1) {
-      user.likes.push(req.user._id);
+      user.followers.push(req.user._id);
     } else {
-      user.likes.splice(userIndex, 1);
+      user.followers.splice(userIndex, 1);
     }
     await user.save();
 
@@ -49,88 +49,61 @@ export const like = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
-  const { info, type } = req.body;
-  const { id } = req.params;
+const updatePhotoProfile = async (req, res) => {
   try {
-    if (!info) {
-      return res.status(404).json({ error: "يجب ملئ الحقل" });
-    }
-    const user = await User.findById(id);
-
-    switch (type) {
-      case "name":
-        user.name = info;
-        await user.save();
-        break;
-      case "email":
-        const exist = await User.findOne({ email: info });
-        console.log(exist);
-        if (exist) {
-          return res.status(400).json({ error: "إيميل موجود بالفعل" });
-        }
-        user.email = info;
-        await user.save();
-        break;
-      case "phone":
-        user.phone = info;
-        await user.save();
-        break;
-      case "address":
-        user.address = info;
-        await user.save();
-        break;
-      case "password":
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(info, salt);
-        user.password = hashedPassword;
-        await user.save();
-        break;
-    }
-
-    return res.status(201).json(user);
-  } catch (error) {
-    return res.status(500).json({ error: "خطأ بالسيرفر" });
-  }
-};
-
-export const updatePhotoProfile = async (req, res) => {
-  try {
-    const formData = req.body;
-    const { id } = req.params;
-    const user = await User.findById(id);
-    const file = req.file;
-    console.log(file);
-    formData.image = file.filename;
-    if (formData.image.length) {
-      user.image = formData.image;
-    }
+    const { image } = req.body;
+    const { _id } = req.user;
+    const user = await User.findById(_id);
+    const url = await uploadImage(image);
+    user.image = url;
     await user.save();
-    return res.status(201).json({ message: "تم تحديث صورة الملف الشخصي" });
+    return res
+      .status(201)
+      .json({ message: "تم تحديث صورة الملف الشخصي", user });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "خطأ بالسيرفر" });
   }
 };
 
-export const updateType = async (req, res) => {
+const update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { type } = req.body;
-    console.log(type);
+    const { field, value, isPrivate } = req.body;
+    const { _id } = req.user;
+
+    if (_id != id) {
+      return res.status(403).json({ error: "محاولة تحديث غير آمنة" });
+    }
+
     const user = await User.findById(id);
-    user.type = type;
+
+    if (!user) {
+      return res.status(404).json({ error: "مستخدم غير موجود" });
+    }
+
+    if (isPrivate !== "null") {
+      user[field] = value;
+      user.private[field] = isPrivate;
+    }
+
+    user[field] = value;
+
     await user.save();
+    console.log(user);
+
     if (!user.fromGoogle) {
       delete user.password;
     }
+
     res.status(200).json(user);
   } catch (error) {
-    res.status(400).json({ error: "Server Error" });
+    console.error(error);
+    res.status(500).json({ error: "Server Error" });
   }
 };
 
-export const resetNotify = async (req, res) => {
+const resetNotify = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
@@ -143,7 +116,7 @@ export const resetNotify = async (req, res) => {
   }
 };
 
-export const deleteCenter = async (req, res) => {
+const deleteCenter = async (req, res) => {
   try {
     const { id } = req.params;
     const center = await User.findById(id);
@@ -160,4 +133,19 @@ export const deleteCenter = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "خطأ بالسيرفر" });
   }
+};
+
+// Delete the image from Cloudinary
+//  if (imageUrl) {
+//   const publicId = imageUrl.split('/').pop().split('.')[0];
+//   await cloudinary.uploader.destroy(publicId);
+// }
+module.exports = {
+  getUser,
+  getUsers,
+  like,
+  updatePhotoProfile,
+  update,
+  resetNotify,
+  deleteCenter,
 };

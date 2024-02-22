@@ -1,21 +1,24 @@
-import mongoose from 'mongoose'
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const articleSchema = new Schema({
+const articleSchema = new Schema(
+  {
     title: String,
     description: String,
-    image : String,
+    image: String,
     userId: mongoose.Schema.Types.ObjectId,
-    likes:{
-        type: [ String ],
-        default: []
+    likes: {
+      type: [String],
+      default: [],
     },
-    disLikes:{
-        type: [ String ],
-        default: []
+    disLikes: {
+      type: [String],
+      default: [],
     },
-},{timestamps: true});
+  },
+  { timestamps: true }
+);
 
-const Article = mongoose.model('Article', articleSchema);
+const Article = mongoose.model("Article", articleSchema);
 
-export default Article
+module.exports = Article;

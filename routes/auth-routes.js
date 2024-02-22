@@ -1,5 +1,5 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   confirmEmail,
   emailVerify,
   getAuthUser,
@@ -7,7 +7,8 @@ import {
   login,
   resetPassword,
   signup,
-} from "../controllers/authController.js";
+} = require("../controllers/authController.js");
+
 const router = express.Router();
 
 router.get("/:token", getAuthUser);
@@ -18,4 +19,4 @@ router.post("/confirmEmail", confirmEmail);
 router.post("/emailVerify", emailVerify);
 router.post("/resetPassword", resetPassword);
 
-export default router;
+module.exports = router;

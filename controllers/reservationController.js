@@ -1,9 +1,9 @@
-import { sendMailPayment } from "../middlewares/nodemailer.js";
-import Coursework from "../models/Coursework.js";
-import Reservation from "../models/Reservation.js";
-import User from "../models/User.js";
+const { sendMailPayment } = require("../middlewares/nodemailer.js");
+const Coursework = require("../models/Coursework.js");
+const Reservation = require("../models/Reservation.js");
+const User = require("../models/User.js");
 
-export const addReservation = async (req, res) => {
+const addReservation = async (req, res) => {
   try {
     const reservation = req.body;
     const { id } = req.params;
@@ -13,12 +13,10 @@ export const addReservation = async (req, res) => {
     });
     console.log(reservationExist.length);
     if (reservationExist.length !== 0) {
-      return res
-        .status(500)
-        .json({
-          error:
-            "سبق لك الحجز في هذه الدورة , قم بحذف حجزك القديم في حال أردت إعادة الحجز",
-        });
+      return res.status(500).json({
+        error:
+          "سبق لك الحجز في هذه الدورة , قم بحذف حجزك القديم في حال أردت إعادة الحجز",
+      });
     }
 
     const course = await Coursework.findById(id);
@@ -36,7 +34,7 @@ export const addReservation = async (req, res) => {
   }
 };
 
-export const getReservations = async (req, res) => {
+const getReservations = async (req, res) => {
   try {
     const allReservations = await Reservation.find();
     const reservations = allReservations.reverse();
@@ -48,7 +46,7 @@ export const getReservations = async (req, res) => {
   }
 };
 
-export const deleteReservation = async (req, res) => {
+const deleteReservation = async (req, res) => {
   try {
     const { id } = req.params;
     await Reservation.findByIdAndDelete(id);
@@ -59,7 +57,7 @@ export const deleteReservation = async (req, res) => {
   }
 };
 
-export const accpetRefuseRes = async (req, res) => {
+const accpetRefuseRes = async (req, res) => {
   try {
     const { id, userId, courseworkId } = req.body;
     const { etat } = req.params;
@@ -102,4 +100,11 @@ export const accpetRefuseRes = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "خطأ بالسيرفر" });
   }
+};
+
+module.exports = {
+  addReservation,
+  getReservations,
+  deleteReservation,
+  accpetRefuseRes,
 };

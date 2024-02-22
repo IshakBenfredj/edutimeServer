@@ -1,13 +1,14 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   addCoursework,
   deleteCoursework,
   getCourseworks,
   getCoursework,
   like,
   updateCoursework,
-} from "../controllers/courseworkController.js";
-import requireAuth from "../middlewares/requireAuth.js";
+} = require("../controllers/courseworkController.js");
+const requireAuth = require("../middlewares/requireAuth.js");
+
 const router = express.Router();
 
 router.get("/", getCourseworks);
@@ -17,4 +18,4 @@ router.post("/like/:id", requireAuth, like);
 router.put("/update/:id", requireAuth, updateCoursework);
 router.delete("/delete/:id", requireAuth, deleteCoursework);
 
-export default router;
+module.exports = router;

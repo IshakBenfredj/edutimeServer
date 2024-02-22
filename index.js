@@ -1,18 +1,19 @@
-import express from "express";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
-import cors from "cors";
-import helmet from "helmet";
-import morgan from "morgan";
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const helmet = require("helmet");
+const bodyParser = require("body-parser");
 // import cron from "node-cron";
 
 // Import Routes
-import authRoutes from "./routes/auth-routes.js";
-import courseRoutes from "./routes/course-routes.js";
-import commentRoutes from "./routes/comment-routes.js";
-import reservationRoutes from "./routes/reservation-routes.js";
-import userRoutes from "./routes/user-routes.js";
-import articleRoutes from "./routes/article-routes.js";
+const authRoutes = require("./routes/auth-routes.js");
+const courseRoutes = require("./routes/course-routes.js");
+const commentRoutes = require("./routes/comment-routes.js");
+const reservationRoutes = require("./routes/reservation-routes.js");
+const userRoutes = require("./routes/user-routes.js");
+const articleRoutes = require("./routes/article-routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 8800;
@@ -24,7 +25,15 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "100mb" }));
+app.use(
+  bodyParser.urlencoded({
+    limit: "100mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
+app.use(bodyParser.text({ limit: "200mb" }));
 
 // Routes
 app.use("/auth", authRoutes);
@@ -33,6 +42,15 @@ app.use("/users", userRoutes);
 app.use("/reservations", reservationRoutes);
 app.use("/articles", articleRoutes);
 app.use("/comments", commentRoutes);
+app.use("/mail/send", async (req, res) => {
+  try {
+    const message = req.body;
+    sendMailFromUserToTeam(message);
+    res.status(200).json({ message: "تم إرسال الرسالة بنجاح" });
+  } catch (error) {
+    res.status(400).json({ error: "Server Error" });
+  }
+});
 
 mongoose
   .connect(process.env.MONGODB_URL, {
