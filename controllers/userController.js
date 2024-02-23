@@ -2,6 +2,7 @@ const Coursework = require("../models/Coursework.js");
 const Reservation = require("../models/Reservation.js");
 const User = require("../models/User.js");
 const uploadImage = require("../middlewares/uploadImage.js");
+const cloudinary = require("cloudinary").v2;
 const bcrypt = require("bcrypt");
 
 const getUser = async (req, res) => {
@@ -54,7 +55,12 @@ const updatePhotoProfile = async (req, res) => {
     const { image } = req.body;
     const { _id } = req.user;
     const user = await User.findById(_id);
+    const imageUrl = user.image;
     const url = await uploadImage(image);
+    if (imageUrl.startsWith("https://res.cloudinary.com/")) {
+      const publicId = imageUrl.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(publicId);
+    }
     user.image = url;
     await user.save();
     return res
@@ -69,7 +75,7 @@ const updatePhotoProfile = async (req, res) => {
 const update = async (req, res) => {
   try {
     const { id } = req.params;
-    const { field, value, isPrivate } = req.body;
+    const { field, value, isPublic } = req.body;
     const { _id } = req.user;
 
     if (_id != id) {
@@ -82,19 +88,60 @@ const update = async (req, res) => {
       return res.status(404).json({ error: "مستخدم غير موجود" });
     }
 
-    if (isPrivate !== "null") {
+    if (isPublic !== "null") {
       user[field] = value;
-      user.private[field] = isPrivate;
+      user.public[field] = isPublic;
+    } else if (field === "isCenter") {
+      user.isCenter = value;
+    } else {
+      user[field] = value;
     }
 
-    user[field] = value;
-
     await user.save();
-    console.log(user);
 
     if (!user.fromGoogle) {
       delete user.password;
     }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+const changePassword = async (req, res) => {
+  const { oldPassword, password } = req.body;
+  const { id } = req.params;
+  const { _id } = req.user;
+  try {
+    if (_id != id) {
+      return res.status(403).json({ error: "محاولة تحديث غير آمنة", failed: true });
+    }
+
+    const user = await User.findById(_id);
+    if (!user) {
+      return res.status(404).json({ error: "مستخدم غير موجود", failed: true });
+    }
+
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(403).json({ error: "كلمة السر القديمة غير صحيحة" });
+    }
+
+    const isSameAsLastPassword = await bcrypt.compare(password, user.password);
+    if (isSameAsLastPassword) {
+      return res.status(403).json({
+        error: "لا يمكن أن تكون كلمة السر الجديدة هي نفس كلمة السر القديمة",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user.password = hashedPassword;
+
+    // Save the user
+    await user.save();
 
     res.status(200).json(user);
   } catch (error) {
@@ -143,6 +190,7 @@ const deleteCenter = async (req, res) => {
 module.exports = {
   getUser,
   getUsers,
+  changePassword,
   like,
   updatePhotoProfile,
   update,

@@ -14,7 +14,11 @@ const signup = async (req, res) => {
     // Create Account
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(req.body.password, salt);
-    const newUser = new User({ ...req.body, password: hash });
+    const newUser = new User({
+      ...req.body,
+      isCenter: req.body === "center",
+      password: hash,
+    });
     const user = await newUser.save();
 
     const token = generateToken(user._id);
@@ -55,7 +59,7 @@ const googleAuth = async (req, res, next) => {
     const user = await User.findOne({ email: googleUser.email });
     if (user) {
       const token = generateToken(user._id);
-      res.status(200).json({ user, token });
+      return res.status(200).json({ user, token });
     } else {
       const newUser = new User({
         name: googleUser.displayName,
@@ -66,7 +70,7 @@ const googleAuth = async (req, res, next) => {
       });
       const user = await newUser.save();
       const token = generateToken(user._id);
-      res.status(200).json({ user, token });
+      return res.status(200).json({ user, token });
     }
   } catch (err) {
     res.status(500).json({ error: err });

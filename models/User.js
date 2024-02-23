@@ -2,8 +2,12 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  type: {
-    type: String,
+  isCenter: {
+    type: Boolean,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
   },
   name: {
     type: String,
@@ -43,26 +47,26 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  private: {
+  public: {
     email: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     phone: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     address: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     followers: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     following: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
 });
