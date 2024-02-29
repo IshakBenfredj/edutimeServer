@@ -1,16 +1,20 @@
 const { sendMailPayment } = require("../middlewares/nodemailer.js");
+const uploadImage = require("../middlewares/uploadImage.js");
 const Coursework = require("../models/Coursework.js");
 const Reservation = require("../models/Reservation.js");
 const User = require("../models/User.js");
 
 const addCoursework = async (req, res) => {
   try {
-    const formData = req.body;
-    const file = req.file;
-    formData.userId = req.user._id;
-    formData.image = file.filename;
-    await Coursework.create(formData);
-    res.status(201).json({ message: "تم إضافة الدورة بنجاح" });
+    const url = await uploadImage(req.body.image);
+    const course = new Coursework({
+      userId: req.user._id,
+      image: url,
+      ...req.body,
+    });
+
+    await course.save();
+    res.status(201).json(course);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "خطأ بالسيرفر" });

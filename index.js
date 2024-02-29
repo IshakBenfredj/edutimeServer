@@ -14,6 +14,7 @@ const commentRoutes = require("./routes/comment-routes.js");
 const reservationRoutes = require("./routes/reservation-routes.js");
 const userRoutes = require("./routes/user-routes.js");
 const articleRoutes = require("./routes/article-routes.js");
+const { sendMailFromUserToTeam } = require("./middlewares/nodemailer.js");
 
 const app = express();
 const PORT = process.env.PORT || 8800;
@@ -44,7 +45,7 @@ app.use("/articles", articleRoutes);
 app.use("/comments", commentRoutes);
 app.use("/mail/send", async (req, res) => {
   try {
-    const message = req.body;
+    const { message } = req.body;
     sendMailFromUserToTeam(message);
     res.status(200).json({ message: "تم إرسال الرسالة بنجاح" });
   } catch (error) {
