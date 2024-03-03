@@ -1,4 +1,4 @@
-const Coursework = require("../models/Coursework.js");
+const Course = require("../models/Course.js");
 const Reservation = require("../models/Reservation.js");
 const User = require("../models/User.js");
 const uploadImage = require("../middlewares/uploadImage.js");
@@ -169,7 +169,7 @@ const deleteCenter = async (req, res) => {
     const center = await User.findById(id);
 
     await Reservation.deleteMany({ centerId: center._id });
-    await Coursework.deleteMany({ userId: center._id });
+    await Course.deleteMany({ userId: center._id });
 
     await User.findByIdAndDelete(id);
 

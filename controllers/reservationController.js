@@ -1,5 +1,5 @@
 const { sendMailPayment } = require("../middlewares/nodemailer.js");
-const Coursework = require("../models/Coursework.js");
+const Course = require("../models/Course.js");
 const Reservation = require("../models/Reservation.js");
 const User = require("../models/User.js");
 
@@ -8,7 +8,7 @@ const addReservation = async (req, res) => {
     const reservation = req.body;
     const { id } = req.params;
     const reservationExist = await Reservation.find({
-      courseworkId: id,
+      courseId: id,
       reservator: req.user._id,
     });
     console.log(reservationExist.length);
@@ -19,8 +19,8 @@ const addReservation = async (req, res) => {
       });
     }
 
-    const course = await Coursework.findById(id);
-    reservation.courseworkId = id;
+    const course = await Course.findById(id);
+    reservation.courseId = id;
     reservation.centerId = course.userId;
     reservation.reservator = req.user._id;
     const user = await User.findById(course.userId);
@@ -59,10 +59,10 @@ const deleteReservation = async (req, res) => {
 
 const accpetRefuseRes = async (req, res) => {
   try {
-    const { id, userId, courseworkId } = req.body;
+    const { id, userId, courseId } = req.body;
     const { etat } = req.params;
     const reservation = await Reservation.findById(id);
-    const coursework = await Coursework.findById(courseworkId);
+    const course = await Course.findById(courseId);
 
     reservation.etat = etat;
     await reservation.save();
@@ -75,10 +75,10 @@ const accpetRefuseRes = async (req, res) => {
         const titleRef = "رفض طلب الحجز";
 
         const messageAcc = `
-                    يسرنا أن نعلمك أنه قد تم قبول طلب الحجز الخاص بك في دورة <b>${coursework.name}</b>
+                    يسرنا أن نعلمك أنه قد تم قبول طلب الحجز الخاص بك في دورة <b>${course.name}</b>
                 `;
         const messageRef = `
-                    يؤسفنا أن نعلمك أنه قد تم رفض طلب الدفع الخاص بك في دورة <b>${coursework.name}</b> يمكنك الاتصال للاستفسار اكثر
+                    يؤسفنا أن نعلمك أنه قد تم رفض طلب الدفع الخاص بك في دورة <b>${course.name}</b> يمكنك الاتصال للاستفسار اكثر
                 `;
 
         if (etat === "accept") {

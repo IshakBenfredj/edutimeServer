@@ -1,21 +1,21 @@
 const express = require("express");
 const {
-  addCoursework,
-  deleteCoursework,
-  getCourseworks,
-  getCoursework,
+  addCourse,
+  deleteCourse,
+  getCourses,
+  getCourse,
   like,
-  updateCoursework,
-} = require("../controllers/courseworkController.js");
+  updateCourse,
+} = require("../controllers/courseController.js");
 const requireAuth = require("../middlewares/requireAuth.js");
 
 const router = express.Router();
 
-router.get("/", getCourseworks);
-router.get("/:id", getCoursework);
-router.post("/add", requireAuth, addCoursework);
+router.get("/", getCourses);
+router.get("/:id", getCourse);
+router.post("/add", requireAuth, addCourse);
+router.put("/update/:id", requireAuth, updateCourse);
 router.post("/like/:id", requireAuth, like);
-router.put("/update/:id", requireAuth, updateCoursework);
-router.delete("/delete/:id", requireAuth, deleteCoursework);
+router.delete("/delete/:id", requireAuth, deleteCourse);
 
 module.exports = router;
