@@ -4,19 +4,17 @@ const { Schema } = mongoose;
 
 const reservationSchema = new Schema(
   {
-    courseworkId: {
+    courseId: {
       type: Schema.Types.ObjectId,
-      ref: "Coursework",
+      ref: "Course",
       required: true,
     },
-    centerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    reservator: { type: Schema.Types.ObjectId, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    client: { type: Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
-    email: { type: String, required: true },
-    birthday: { type: String, required: true },
     phone: { type: String, required: true },
-    wilaya: { type: String, required: true },
-    etat: { type: String, default: "wait" },
+    address: { type: String, required: true },
+    isAccept: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
