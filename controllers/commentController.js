@@ -2,14 +2,9 @@ const Comment = require("../models/Comment.js");
 
 const addComment = async (req, res) => {
   try {
-    const { comment, id } = req.body;
-    const commentObj = {
-      userId: req.user._id,
-      id,
-      comment,
-    };
-    await Comment.create(commentObj);
-    res.status(201).json({ message: "تم التعليق" });
+    const comment = new Comment({ ...req.body, userId: req.user._id });
+    await comment.save();
+    res.status(201).json(comment);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "خطأ بالسيرفر" });
@@ -19,6 +14,18 @@ const addComment = async (req, res) => {
 const getComments = async (req, res) => {
   try {
     const allComments = await Comment.find();
+    const comments = allComments.reverse();
+
+    res.status(201).json(comments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "خطأ بالسيرفر" });
+  }
+};
+
+const getCommentsById = async (req, res) => {
+  try {
+    const allComments = await Comment.find({ postId: req.params.id });
     const comments = allComments.reverse();
 
     res.status(201).json(comments);
@@ -43,4 +50,5 @@ module.exports = {
   addComment,
   getComments,
   deleteComment,
+  getCommentsById
 };

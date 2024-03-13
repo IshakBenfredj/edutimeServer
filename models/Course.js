@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const courseSchema = new Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Assuming there is a User model
+    ref: "User",
     required: true,
   },
   image: String,
