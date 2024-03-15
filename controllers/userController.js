@@ -22,8 +22,7 @@ const getUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const usersFind = await User.find();
-    const users = usersFind.reverse();
+    const users = await User.find().sort({ createdAt: -1 });
 
     res.status(200).json(users);
   } catch (error) {
@@ -116,7 +115,9 @@ const changePassword = async (req, res) => {
   const { _id } = req.user;
   try {
     if (_id != id) {
-      return res.status(403).json({ error: "محاولة تحديث غير آمنة", failed: true });
+      return res
+        .status(403)
+        .json({ error: "محاولة تحديث غير آمنة", failed: true });
     }
 
     const user = await User.findById(_id);

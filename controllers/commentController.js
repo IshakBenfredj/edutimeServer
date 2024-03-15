@@ -13,8 +13,7 @@ const addComment = async (req, res) => {
 
 const getComments = async (req, res) => {
   try {
-    const allComments = await Comment.find();
-    const comments = allComments.reverse();
+    const comments = await Comment.find().sort({ createdAt: -1 });
 
     res.status(201).json(comments);
   } catch (error) {
@@ -25,8 +24,9 @@ const getComments = async (req, res) => {
 
 const getCommentsById = async (req, res) => {
   try {
-    const allComments = await Comment.find({ postId: req.params.id });
-    const comments = allComments.reverse();
+    const comments = await Comment.find({ postId: req.params.id }).sort({
+      createdAt: -1,
+    });
 
     res.status(201).json(comments);
   } catch (error) {
@@ -50,5 +50,5 @@ module.exports = {
   addComment,
   getComments,
   deleteComment,
-  getCommentsById
+  getCommentsById,
 };

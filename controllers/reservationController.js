@@ -1,7 +1,6 @@
 const { sendMailPayment } = require("../middlewares/nodemailer.js");
 const Course = require("../models/Course.js");
 const Reservation = require("../models/Reservation.js");
-const User = require("../models/User.js");
 
 const addReservation = async (req, res) => {
   try {
@@ -37,7 +36,9 @@ const addReservation = async (req, res) => {
 
 const getClientReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find({ client: req.user._id });
+    const reservations = await Reservation.find({ client: req.user._id }).sort({
+      createdAt: -1,
+    });
 
     res.status(201).json(reservations);
   } catch (error) {
@@ -48,7 +49,9 @@ const getClientReservations = async (req, res) => {
 
 const getUserReservations = async (req, res) => {
   try {
-    const reservations = await Reservation.find({ userId: req.user._id });
+    const reservations = await Reservation.find({ userId: req.user._id }).sort({
+      createdAt: -1,
+    });
 
     res.status(201).json(reservations);
   } catch (error) {
@@ -75,25 +78,25 @@ const accpetRes = async (req, res) => {
 
     reservation.isAccept = true;
     await reservation.save();
-    res.status(200).json(reservation)
+    res.status(200).json(reservation);
     // async function sendPaymentConfirmationEmail() {
     //   try {
     //     const user = await User.findById(userId);
 
-        // const titleAcc = "قبول طلب الحجز";
-        // const titleRef = "رفض طلب الحجز";
+    // const titleAcc = "قبول طلب الحجز";
+    // const titleRef = "رفض طلب الحجز";
 
-        // const messageAcc = `
-        //             يسرنا أن نعلمك أنه قد تم قبول طلب الحجز الخاص بك في دورة <b>${course.name}</b>
-        //         `;
-        // const messageRef = `
-        //             يؤسفنا أن نعلمك أنه قد تم رفض طلب الدفع الخاص بك في دورة <b>${course.name}</b> يمكنك الاتصال للاستفسار اكثر
-        //         `;
+    // const messageAcc = `
+    //             يسرنا أن نعلمك أنه قد تم قبول طلب الحجز الخاص بك في دورة <b>${course.name}</b>
+    //         `;
+    // const messageRef = `
+    //             يؤسفنا أن نعلمك أنه قد تم رفض طلب الدفع الخاص بك في دورة <b>${course.name}</b> يمكنك الاتصال للاستفسار اكثر
+    //         `;
 
-          // await sendMailPayment(user.email, titleAcc, messageAcc);
+    // await sendMailPayment(user.email, titleAcc, messageAcc);
     //       res.status(201).json({ message: "تم قبول الحجز" });
 
-        // console.log("Email sent successfully");
+    // console.log("Email sent successfully");
     //   } catch (error) {
     //     console.error("Error sending email:", error);
     //   }

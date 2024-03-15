@@ -24,9 +24,7 @@ const addCourse = async (req, res) => {
 
 const getCourses = async (req, res) => {
   try {
-    const allCourses = await Course.find();
-    const courses = allCourses.reverse();
-
+    const courses = await Course.find().sort({ createdAt: -1 });
     res.status(201).json(courses);
   } catch (error) {
     console.error(error);

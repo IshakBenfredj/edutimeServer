@@ -24,8 +24,7 @@ const addArticle = async (req, res) => {
 
 const getArticles = async (req, res) => {
   try {
-    const all_articles = await Article.find();
-    const articles = all_articles.reverse();
+    const articles = await Article.find().sort({ createdAt: -1 });
 
     res.status(200).json(articles);
   } catch (error) {
