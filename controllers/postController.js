@@ -34,7 +34,27 @@ const getPosts = async (req, res) => {
   }
 };
 
+const like = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findById(id);
+    const userIndex = post.likes.indexOf(req.user._id);
+
+    if (userIndex === -1) {
+      post.likes.push(req.user._id);
+    } else {
+      post.likes.splice(userIndex, 1);
+    }
+    await post.save();
+
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(500).json({ error: "خطأ بالسيرفر" });
+  }
+};
+
 module.exports = {
   addPost,
   getPosts,
+  like,
 };
