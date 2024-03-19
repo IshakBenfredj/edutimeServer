@@ -34,6 +34,17 @@ const getPosts = async (req, res) => {
   }
 };
 
+const getPostsById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const posts = await Post.find({ userId: id }).sort({ createdAt: -1 });
+    res.status(201).json(posts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "خطأ بالسيرفر" });
+  }
+};
+
 const like = async (req, res) => {
   const { id } = req.params;
   try {
@@ -53,8 +64,21 @@ const like = async (req, res) => {
   }
 };
 
+const deletePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Post.findByIdAndDelete(id);
+    res.status(201).json({ message: "تم حذف المناقشة" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "خطأ بالسيرفر" });
+  }
+};
+
 module.exports = {
   addPost,
   getPosts,
+  getPostsById,
   like,
+  deletePost,
 };

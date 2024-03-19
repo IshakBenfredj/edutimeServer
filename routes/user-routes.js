@@ -1,7 +1,7 @@
 const express = require("express");
 const requireAuth = require("../middlewares/requireAuth.js");
 const {
-  deleteCenter,
+  deleteUser,
   getUser,
   getUsers,
   like,
@@ -21,6 +21,6 @@ router.put("/update/:id", requireAuth, update);
 router.put("/changePassword/:id", requireAuth, changePassword);
 router.put("/like/:id", requireAuth, like);
 router.put("/updatePhotoProfile", requireAuth, updatePhotoProfile);
-router.delete("/delete/:id", requireAuth, deleteCenter);
+router.delete("/delete/:id", requireAuth, deleteUser);
 
 module.exports = router;

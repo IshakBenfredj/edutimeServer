@@ -1,7 +1,4 @@
 var cloudinary = require("cloudinary").v2;
-// const cloud_name = process.env.CLOUD_NAME;
-// const api_key = process.env.API_KEY;
-// const api_secret = process.env.API_SECRET;
 
 cloudinary.config({
   cloud_name: "dfwxtyqz9",
@@ -23,6 +20,10 @@ const uploadImage = (image) => {
       }
     );
   });
+};
+exports.deleteImage = async (imageUrl) => {
+  const publicId = imageUrl.split("/").pop().split(".")[0];
+  await cloudinary.uploader.destroy(publicId);
 };
 module.exports = uploadImage;
 

@@ -13,8 +13,9 @@ const courseRoutes = require("./routes/course-routes.js");
 const commentRoutes = require("./routes/comment-routes.js");
 const reservationRoutes = require("./routes/reservation-routes.js");
 const userRoutes = require("./routes/user-routes.js");
-const articleRoutes = require("./routes/article-routes.js");
+const blogRoutes = require("./routes/blog-routes.js");
 const postRoutes = require("./routes/post-routes.js");
+const requestRoutes = require("./routes/request-routes.js");
 const { sendMailFromUserToTeam } = require("./middlewares/nodemailer.js");
 
 const app = express();
@@ -43,8 +44,9 @@ app.use("/courses", courseRoutes);
 app.use("/users", userRoutes);
 app.use("/reservations", reservationRoutes);
 app.use("/posts", postRoutes);
-app.use("/articles", articleRoutes);
+app.use("/blogs", blogRoutes);
 app.use("/comments", commentRoutes);
+app.use("/requests", requestRoutes);
 app.use("/mail/send", async (req, res) => {
   try {
     const { message } = req.body;

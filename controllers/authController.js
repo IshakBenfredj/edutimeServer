@@ -17,6 +17,7 @@ const signup = async (req, res) => {
     const newUser = new User({
       ...req.body,
       isCenter: req.body === "center",
+      isAdmin: req.body.email === "edutime19@gmail.com",
       password: hash,
     });
     const user = await newUser.save();
@@ -61,13 +62,19 @@ const googleAuth = async (req, res, next) => {
       const token = generateToken(user._id);
       return res.status(200).json({ user, token });
     } else {
+      const isAdmin = googleUser.email === "edutime19@gmail.com";
       const newUser = new User({
         name: googleUser.displayName,
         email: googleUser.email,
         image: googleUser.photoURL,
         phone: googleUser.phoneNumber,
+        isAdmin,
+        checkmark: true,
         fromGoogle: true,
       });
+      if (isAdmin) {
+        newUser.isCenter = true
+      }
       const user = await newUser.save();
       const token = generateToken(user._id);
       return res.status(200).json({ user, token });

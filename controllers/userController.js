@@ -1,8 +1,8 @@
 const Course = require("../models/Course.js");
+const Post = require("../models/Post.js");
 const Reservation = require("../models/Reservation.js");
 const User = require("../models/User.js");
 const uploadImage = require("../middlewares/uploadImage.js");
-const cloudinary = require("cloudinary").v2;
 const bcrypt = require("bcrypt");
 
 const getUser = async (req, res) => {
@@ -57,8 +57,7 @@ const updatePhotoProfile = async (req, res) => {
     const imageUrl = user.image;
     const url = await uploadImage(image);
     if (imageUrl.startsWith("https://res.cloudinary.com/")) {
-      const publicId = imageUrl.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(publicId);
+      await uploadImage.deleteImage(imageUrl);
     }
     user.image = url;
     await user.save();
@@ -164,19 +163,21 @@ const resetNotify = async (req, res) => {
   }
 };
 
-const deleteCenter = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const center = await User.findById(id);
-
-    await Reservation.deleteMany({ centerId: center._id });
-    await Course.deleteMany({ userId: center._id });
+    const user = await User.findById(id);
+    if (user.isCenter) {
+      await Reservation.deleteMany({ userId: id });
+      await Course.deleteMany({ userId: id });
+    } else {
+      await Reservation.deleteMany({ client: id });
+    }
+    await Post.deleteMany({ userId: id });
 
     await User.findByIdAndDelete(id);
 
-    res
-      .status(201)
-      .json({ message: "تم حذف المركز وكل الحجوزات والدورات المرتبطة به" });
+    res.status(201).json({ message: "تم حذف المستخدم بنجاح" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "خطأ بالسيرفر" });
@@ -196,5 +197,5 @@ module.exports = {
   updatePhotoProfile,
   update,
   resetNotify,
-  deleteCenter,
+  deleteUser,
 };

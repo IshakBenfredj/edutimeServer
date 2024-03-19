@@ -32,6 +32,17 @@ const getCourses = async (req, res) => {
   }
 };
 
+const getCoursesById = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const courses = await Course.find({ userId }).sort({ createdAt: -1 });
+    res.status(201).json(courses);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "خطأ بالسيرفر" });
+  }
+};
+
 const getCourse = async (req, res) => {
   const { id } = req.params;
 
@@ -116,6 +127,7 @@ const deleteCourse = async (req, res) => {
 module.exports = {
   addCourse,
   getCourses,
+  getCoursesById,
   getCourse,
   like,
   updateCourse,
