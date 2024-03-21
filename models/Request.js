@@ -16,18 +16,10 @@ const documentationRequestSchema = new mongoose.Schema(
       enum: ["change", "doc"],
       required: true,
     },
-    status: {
-      type: String,
-      enum: ["pending", "accepted", "rejected"],
-      default: "pending",
-    },
   },
   { timestamps: true }
 );
 
-const Request = mongoose.model(
-  "Request",
-  documentationRequestSchema
-);
+const Request = mongoose.model("Request", documentationRequestSchema);
 
 module.exports = Request;

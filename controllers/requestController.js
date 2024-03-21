@@ -1,6 +1,4 @@
-// controllers/authenticationController.js
-
-const uploadImage = require("../middlewares/uploadImage.js");
+const { uploadImage, deleteImage } = require("../middlewares/uploadImage.js");
 const Request = require("../models/Request.js");
 const User = require("../models/User.js");
 
@@ -13,7 +11,7 @@ const addRequest = async (req, res) => {
     });
     if (requestOld) {
       return res.status(400).json({
-        error: "لا يمكنك طلب التوثيق مرتين, إنتظر الرد من فريق العمل",
+        error: "لا يمكنك الطلب مرتين, إنتظر الرد من فريق العمل",
       });
     }
     const image = await uploadImage(req.body.image);
@@ -29,58 +27,58 @@ const addRequest = async (req, res) => {
   }
 };
 
-// حذف طلب توثيق
-const deleteRequest = async (req, res) => {
+const getRequests = async (req, res) => {
   try {
-    const { id } = req.params;
-    const request = await Request.findById(id);
-    await deleteImage(request.image);
-    await Request.findByIdAndDelete(id);
-
-    res.status(200).json({ message: "تم حذف طلب التوثيق" });
+    const requests = await Request.find();
+    res.status(201).json(requests);
   } catch (error) {
     res.status(500).json({ error: "server error" });
   }
 };
 
-// قبول طلب توثيق
 const acceptRequest = async (req, res) => {
   try {
     const { id } = req.params;
-    const request = await Request.findByIdAndUpdate(
-      id,
-      { status: "accepted" },
-      { new: true }
-    );
-    await User.findByIdAndUpdate(
-      request.userId,
-      { checkmark: true },
-      { new: true }
-    );
-    res.status(200).json(request);
+    const request = await Request.findByIdAndDelete(id);
+    if (!request) {
+      return res.status(404).json({ error: "Request not found" });
+    }
+    const user = await User.findById(request.userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    if (user.isCenter) {
+      user.checkmark = true;
+    } else {
+      user.isCenter = true;
+    }
+    await user.save();
+    await deleteImage(request.image);
+    res.status(200).json({ message: "done" });
   } catch (error) {
-    res.status(500).json({ error: "server error" });
+    console.error("Error accepting request:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-// رفض طلب توثيق
 const refuseRequest = async (req, res) => {
   try {
     const { id } = req.params;
-    const request = await Request.findByIdAndUpdate(
-      id,
-      { status: "rejected" },
-      { new: true }
-    );
-    res.status(200).json({ success: true, data: request });
+    const request = await Request.findByIdAndDelete(id);
+    if (!request) {
+      return res.status(404).json({ error: "Request not found" });
+    }
+    await deleteImage(request.image);
+    res.status(200).json({ message: "done" });
   } catch (error) {
-    res.status(500).json({ error: "server error" });
+    console.error("Error refusing request:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
 module.exports = {
   addRequest,
-  deleteRequest,
+  getRequests,
   acceptRequest,
   refuseRequest,
 };

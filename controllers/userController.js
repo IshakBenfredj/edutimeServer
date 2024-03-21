@@ -2,7 +2,7 @@ const Course = require("../models/Course.js");
 const Post = require("../models/Post.js");
 const Reservation = require("../models/Reservation.js");
 const User = require("../models/User.js");
-const uploadImage = require("../middlewares/uploadImage.js");
+const { uploadImage, deleteImage } = require("../middlewares/uploadImage.js");
 const bcrypt = require("bcrypt");
 
 const getUser = async (req, res) => {
@@ -57,7 +57,7 @@ const updatePhotoProfile = async (req, res) => {
     const imageUrl = user.image;
     const url = await uploadImage(image);
     if (imageUrl.startsWith("https://res.cloudinary.com/")) {
-      await uploadImage.deleteImage(imageUrl);
+      await deleteImage(imageUrl);
     }
     user.image = url;
     await user.save();
@@ -173,6 +173,7 @@ const deleteUser = async (req, res) => {
     } else {
       await Reservation.deleteMany({ client: id });
     }
+    await deleteImage(user.image);
     await Post.deleteMany({ userId: id });
 
     await User.findByIdAndDelete(id);

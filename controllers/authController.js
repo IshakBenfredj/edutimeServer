@@ -69,11 +69,11 @@ const googleAuth = async (req, res, next) => {
         image: googleUser.photoURL,
         phone: googleUser.phoneNumber,
         isAdmin,
-        checkmark: true,
+        checkmark: isAdmin,
         fromGoogle: true,
       });
       if (isAdmin) {
-        newUser.isCenter = true
+        newUser.isCenter = true;
       }
       const user = await newUser.save();
       const token = generateToken(user._id);

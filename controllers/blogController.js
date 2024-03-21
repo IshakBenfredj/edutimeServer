@@ -1,4 +1,4 @@
-const uploadImage = require("../middlewares/uploadImage.js");
+const { uploadImage, deleteImage } = require("../middlewares/uploadImage.js");
 const Blog = require("../models/Blog.js");
 
 const addBlog = async (req, res) => {
@@ -45,8 +45,8 @@ const getBlogById = async (req, res) => {
 const deleteBlog = async (req, res) => {
   try {
     const { id } = req.params;
-    await Blog.findByIdAndDelete(id);
-
+    const blog = await Blog.findByIdAndDelete(id);
+    await deleteImage(blog.image);
     res.status(200).json({ message: "تم حذف المقال" });
   } catch (error) {
     console.log(error);

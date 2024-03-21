@@ -21,11 +21,11 @@ const uploadImage = (image) => {
     );
   });
 };
-exports.deleteImage = async (imageUrl) => {
+const deleteImage = async (imageUrl) => {
   const publicId = imageUrl.split("/").pop().split(".")[0];
   await cloudinary.uploader.destroy(publicId);
 };
-module.exports = uploadImage;
+module.exports = { uploadImage, deleteImage };
 
 // module.exports.uploadMultipleImages = (images) => {
 //   return new Promise((resolve, reject) => {
