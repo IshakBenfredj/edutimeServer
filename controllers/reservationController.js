@@ -64,7 +64,7 @@ const deleteReservation = async (req, res) => {
   try {
     const { id } = req.params;
     await Reservation.findByIdAndDelete(id);
-    res.status(201).json({ message: "تم حذف الحجز" });
+    res.status(201).json({ message: "تم إلغاء الحجز" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "خطأ بالسيرفر" });

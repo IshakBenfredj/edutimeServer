@@ -178,18 +178,33 @@ const deleteUser = async (req, res) => {
 
     await User.findByIdAndDelete(id);
 
-    res.status(201).json({ message: "تم حذف المستخدم بنجاح" });
+    res.status(200).json({ message: "تم حذف المستخدم بنجاح" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "خطأ بالسيرفر" });
   }
 };
 
-// Delete the image from Cloudinary
-//  if (imageUrl) {
-//   const publicId = imageUrl.split('/').pop().split('.')[0];
-//   await cloudinary.uploader.destroy(publicId);
-// }
+const getFriendsOfUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const following = await User.find({ _id: { $in: user.followers } });
+    const followers = await User.find({ followers: { $in: [user._id] } });
+    const friends = following.filter((followingUser) =>
+      followers.some((follower) => follower._id.equals(followingUser._id))
+    );
+
+    res.status(201).json(friends);
+  } catch (error) {
+    res.status(500).json({ error: "خطأ بالسيرفر" });
+  }
+};
+
 module.exports = {
   getUser,
   getUsers,
@@ -199,4 +214,5 @@ module.exports = {
   update,
   resetNotify,
   deleteUser,
+  getFriendsOfUser,
 };

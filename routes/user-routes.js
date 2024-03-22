@@ -9,11 +9,13 @@ const {
   update,
   updatePhotoProfile,
   changePassword,
+  getFriendsOfUser,
 } = require("../controllers/userController.js");
 
 const router = express.Router();
 
 router.get("/", getUsers);
+router.get("/friends/:id", getFriendsOfUser);
 router.get("/:id", getUser);
 router.put("/resetNotify/:id", resetNotify);
 

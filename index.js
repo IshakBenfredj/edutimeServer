@@ -5,7 +5,6 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const bodyParser = require("body-parser");
-// import cron from "node-cron";
 
 // Import Routes
 const authRoutes = require("./routes/auth-routes.js");
@@ -16,6 +15,8 @@ const userRoutes = require("./routes/user-routes.js");
 const blogRoutes = require("./routes/blog-routes.js");
 const postRoutes = require("./routes/post-routes.js");
 const requestRoutes = require("./routes/request-routes.js");
+const conversationRoutes = require("./routes/conversations-routes.js");
+const messageRoutes = require("./routes/messages-routes.js");
 const { sendMailFromUserToTeam } = require("./middlewares/nodemailer.js");
 
 const app = express();
@@ -46,7 +47,10 @@ app.use("/reservations", reservationRoutes);
 app.use("/posts", postRoutes);
 app.use("/blogs", blogRoutes);
 app.use("/comments", commentRoutes);
+app.use("/conversations", conversationRoutes);
+app.use("/messages", messageRoutes);
 app.use("/requests", requestRoutes);
+
 app.use("/mail/send", async (req, res) => {
   try {
     const { message } = req.body;
