@@ -11,28 +11,28 @@ router.post("/fromProfile", requireAuth, async (req, res) => {
       members: { $all: [req.user._id, req.body.id] },
     });
 
-    if (conversation) {
-      const newMessage = new Message({
-        conversationId: conversation._id,
-        sender: req.user._id,
-        text: req.body.text,
-      });
-
-      const savedMessage = await newMessage.save();
-      res.status(200).json({ message: "تم إرسال الرسالة" });
-    } else {
+    if (!conversation) {
       const newConv = new Conversation({
         members: [req.user._id, req.body.id],
       });
-      const savedConv = await newConv.save();
+      const conversation = await newConv.save();
       const newMessage = new Message({
         conversationId: savedConv._id,
         sender: req.user._id,
         text: req.body.text,
       });
 
-      const savedMessage = await newMessage.save();
-      res.status(200).json({ message: "تم إرسال الرسالة" });
+      const message = await newMessage.save();
+      res.status(200).json({ conversation, message });
+    } else {
+      const newMessage = new Message({
+        conversationId: conversation._id,
+        sender: req.user._id,
+        text: req.body.text,
+      });
+
+      const message = await newMessage.save();
+      res.status(200).json({ message, conversation });
     }
   } catch (err) {
     res.status(500).json(err);
@@ -58,6 +58,50 @@ router.get("/:conversationId", requireAuth, async (req, res) => {
       conversationId: req.params.conversationId,
     });
     res.status(200).json(messages);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.put(
+  "/length/:conversationId/:senderId",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const messages = await Message.find({
+        conversationId: req.params.conversationId,
+        sender: req.params.senderId,
+        isNewMessage: true,
+      });
+
+      const isNewTrueCount = messages.length;
+
+      res.status(200).json(isNewTrueCount);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+);
+
+router.put("/:conversationId/:senderId", requireAuth, async (req, res) => {
+  try {
+    const conversationId = req.params.conversationId;
+    const senderId = req.params.senderId;
+
+    const messages = await Message.find({
+      conversationId,
+      sender: senderId,
+      isNewMessage: true,
+    });
+
+    for (const message of messages) {
+      message.isNewMessage = false;
+      await message.save();
+    }
+
+    res
+      .status(200)
+      .json({ message: "isNew set to false for all relevant messages." });
   } catch (err) {
     res.status(500).json(err);
   }
