@@ -45,6 +45,17 @@ const getPostsById = async (req, res) => {
   }
 };
 
+const getPostById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const post = await Post.findById(id);
+    res.status(201).json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "خطأ بالسيرفر" });
+  }
+};
+
 const like = async (req, res) => {
   const { id } = req.params;
   try {
@@ -82,6 +93,7 @@ module.exports = {
   addPost,
   getPosts,
   getPostsById,
+  getPostById,
   like,
   deletePost,
 };
