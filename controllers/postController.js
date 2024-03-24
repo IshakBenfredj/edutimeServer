@@ -1,4 +1,4 @@
-const {uploadImage,deleteImage} = require("../middlewares/uploadImage.js");
+const { uploadImage, deleteImage } = require("../middlewares/uploadImage.js");
 const Post = require("../models/Post.js");
 
 const addPost = async (req, res) => {
@@ -68,7 +68,9 @@ const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
     const post = await Post.findByIdAndDelete(id);
-    await deleteImage(post.image);
+    if (post.image) {
+      await deleteImage(post.image);
+    }
     res.status(201).json({ message: "تم حذف المناقشة" });
   } catch (error) {
     console.error(error);

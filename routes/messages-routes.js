@@ -17,7 +17,7 @@ router.post("/fromProfile", requireAuth, async (req, res) => {
       });
       const conversation = await newConv.save();
       const newMessage = new Message({
-        conversationId: savedConv._id,
+        conversationId: conversation._id,
         sender: req.user._id,
         text: req.body.text,
       });
@@ -103,6 +103,16 @@ router.put("/:conversationId/:senderId", requireAuth, async (req, res) => {
       .status(200)
       .json({ message: "isNew set to false for all relevant messages." });
   } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+router.delete("/:id", requireAuth, async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "done" });
+  } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
