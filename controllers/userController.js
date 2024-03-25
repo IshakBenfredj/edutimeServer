@@ -11,7 +11,7 @@ const getUser = async (req, res) => {
   try {
     const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({ error: "user doesn't exist" });
+      return res.json(null);
     }
 
     res.status(200).json(user);
