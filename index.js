@@ -18,6 +18,7 @@ const requestRoutes = require("./routes/request-routes.js");
 const conversationRoutes = require("./routes/conversations-routes.js");
 const messageRoutes = require("./routes/messages-routes.js");
 const notificationRoutes = require("./routes/notification-routes.js");
+const pubRoutes = require("./routes/pub-routes.js");
 const { sendMailFromUserToTeam } = require("./middlewares/nodemailer.js");
 
 const app = express();
@@ -52,6 +53,7 @@ app.use("/conversations", conversationRoutes);
 app.use("/messages", messageRoutes);
 app.use("/requests", requestRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/pubs", pubRoutes);
 
 app.use("/mail/send", async (req, res) => {
   try {
